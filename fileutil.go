@@ -6,7 +6,6 @@ package fileutil
 import (
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 )
 
@@ -20,6 +19,7 @@ var (
 
 //构建一个每日写日志文件的写入器
 func OpenFile(pathfile string, filemode os.FileMode, fileflag int) (wc *os.File, err error) {
+	pathfile = strings.Replace(pathfile, "\\", "/", -1)
 	dir := path.Dir(pathfile)
 	if _, err = os.Stat(dir); err != nil && !os.IsExist(err) {
 		if !os.IsNotExist(err) {
@@ -56,21 +56,12 @@ func FileExists(dir string) bool {
 
 //eg:filename=`../a/test/aa.txt` newExt=`.csv` -->return=`../a/test/aa.csv`
 func ChangeFileExt(filename, newExt string) string {
-	filename = filepath.ToSlash(filename)
+	filename = strings.Replace(filename, "\\", "/", -1)
 	file := path.Base(filename)
 	file = strings.TrimSuffix(file, path.Ext(file)) + newExt
 	dir := path.Dir(filename)
-	if dir == "." {
-		dir = dir + "/" + file
-	} else {
-		dir = path.Join(dir, file)
-	}
-	return filepath.ToSlash(dir)
+	return path.Join(dir, file)
 }
 func PathJoin(dir, filename string) string {
-	if dir == "." {
-		return filepath.ToSlash(dir + "/" + filename)
-	} else {
-		return filepath.ToSlash(path.Join(dir, filename))
-	}
+	return strings.Replace(path.Join(dir, filename), "\\", "/", -1)
 }
