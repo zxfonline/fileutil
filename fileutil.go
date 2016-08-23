@@ -18,7 +18,7 @@ var (
 )
 
 //构建一个每日写日志文件的写入器
-func OpenFile(pathfile string, filemode os.FileMode, fileflag int) (wc *os.File, err error) {
+func OpenFile(pathfile string, fileflag int, filemode os.FileMode) (wc *os.File, err error) {
 	pathfile = strings.Replace(pathfile, "\\", "/", -1)
 	dir := path.Dir(pathfile)
 	if _, err = os.Stat(dir); err != nil && !os.IsExist(err) {
