@@ -13,7 +13,7 @@ import (
 
 var (
 	// 默认的文件权限
-	DefaultFileMode os.FileMode = os.ModePerm
+	DefaultFileMode os.FileMode = 0644
 
 	// linux下需加上O_WRONLY或是O_RDWR
 	DefaultFileFlag int = os.O_APPEND | os.O_CREATE | os.O_WRONLY
