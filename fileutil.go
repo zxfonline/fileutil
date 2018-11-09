@@ -74,7 +74,7 @@ func InitPathDirs(retset bool, rootPaths ...string) {
 //FindFile 查找文件，根据初始化的文件目录顺序查找文件
 func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 	for _, dir := range defaultDirs {
-		fpath := PathJoin(dir, name)
+		fpath := path.Join(dir, name)
 		if FileExists(fpath) {
 			f, err := os.OpenFile(fpath, flag, perm)
 			if err != nil {
@@ -91,7 +91,22 @@ func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 		}
 		return f, nil
 	}
-	return nil, fmt.Errorf("file no found,file:%s,dirs:%v.", name, defaultDirs)
+	return nil, fmt.Errorf("file no found,file:%s,dirs:%v.", fpath, defaultDirs)
+}
+
+//FindFilePath 查找文件路径，根据初始化的文件目录顺序查找文件
+func FindFilePath(name string) (string, error) {
+	for _, dir := range defaultDirs {
+		fpath := path.Join(dir, name)
+		if FileExists(fpath) {
+			return fpath, nil
+		}
+	}
+	fpath := TransPath(name)
+	if FileExists(fpath) {
+		return fpath, nil
+	}
+	return "", fmt.Errorf("file no found,file:%s,dirs:%v.", fpath, defaultDirs)
 }
 
 //OpenFile 打开文件，如果目录文件不存在则创建一个文件
