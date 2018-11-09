@@ -24,6 +24,7 @@ var (
 
 func init() {
 	wd, _ := os.Getwd()
+	fmt.Printf("execute path:%v.\n", wd)
 	arg0 := path.Clean(os.Args[0])
 	var exeFile string
 	if strings.HasPrefix(arg0, "/") {
@@ -39,10 +40,11 @@ func init() {
 	if wdDir != exeDir { //2：可执行文件所在目录
 		defaultDirs = append(defaultDirs, exeDir)
 	}
-	exeLastDir := TransPath(path.Join(parent, ".."))
+	exeLastDir := TransPath(path.Join(exeDir, ".."))
 	if wdDir != exeLastDir { //3：可执行文件上一级目录
 		defaultDirs = append(defaultDirs, exeLastDir)
 	}
+	fmt.Printf("default file base dirs:%v.\n", defaultDirs)
 }
 
 //InitPathDirs 初始化工程文件根目录 retset：是否重置默认的目录列表 。 rootPaths：新增的目录列表，如果没有设置指定根目录并未重置默认的目录的话，文件搜索规则为: 1：命令执行所在目录、2：可执行文件所在目录、3：可执行文件上一级目录...新增的路径列表，否则直接按照给的文件名称查找文件。
@@ -94,8 +96,8 @@ func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 	return nil, fmt.Errorf("file no found,file:%s,dirs:%v.", fpath, defaultDirs)
 }
 
-//FindFilePath 查找文件路径，根据初始化的文件目录顺序查找文件
-func FindFilePath(name string) (string, error) {
+//FindFullFilePath 查找相对目录文件的全路径文件 根据初始化的文件目录顺序查找文件（查文件不是查目录）
+func FindFullFilePath(name string) (string, error) {
 	for _, dir := range defaultDirs {
 		fpath := path.Join(dir, name)
 		if FileExists(fpath) {
@@ -107,6 +109,21 @@ func FindFilePath(name string) (string, error) {
 		return fpath, nil
 	}
 	return "", fmt.Errorf("file no found,file:%s,dirs:%v.", fpath, defaultDirs)
+}
+
+//FindFullPathPath 查找相对文件目录的全路径目录 根据初始化的文件目录顺序查找文件（查目录不是查文件）
+func FindFullPathPath(name string) (string, error) {
+	for _, dir := range defaultDirs {
+		fpath := path.Join(dir, name)
+		if DirExists(fpath) {
+			return fpath, nil
+		}
+	}
+	fpath := TransPath(name)
+	if DirExists(fpath) {
+		return fpath, nil
+	}
+	return "", fmt.Errorf("file no found,path:%s,dirs:%v.", fpath, defaultDirs)
 }
 
 //OpenFile 打开文件，如果目录文件不存在则创建一个文件
