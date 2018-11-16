@@ -32,14 +32,8 @@ var (
 func init() {
 	wd, _ := os.Getwd()
 	fmt.Printf("execute path:%v.\n", wd)
-	arg0 := path.Clean(os.Args[0])
-	var exeFile string
-	if strings.HasPrefix(arg0, "/") {
-		exeFile = arg0
-	} else {
-		exeFile = path.Join(wd, arg0)
-	}
-	parent, exeName := path.Split(exeFile)
+	exeFile := path.Clean(os.Args[0])
+	parent, exeName := filepath.Split(exeFile)
 	names := strings.Split(exeName, ".")
 	exeName = names[0]
 	//1：命令执行所在目录
@@ -49,7 +43,7 @@ func init() {
 	if wdDir != exeDir { //2：可执行文件所在目录
 		defaultDirs = append(defaultDirs, exeDir)
 	}
-	exeLastDir := TransPath(path.Join(exeDir, ".."))
+	exeLastDir := TransPath(filepath.Join(exeDir, ".."))
 	if wdDir != exeLastDir { //3：可执行文件上一级目录
 		defaultDirs = append(defaultDirs, exeLastDir)
 	}
@@ -98,7 +92,7 @@ func InitPathDirs(retset bool, rootPaths ...string) {
 //FindFile 查找文件，根据初始化的文件目录顺序查找文件
 func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 	for _, dir := range defaultDirs {
-		fpath := path.Join(dir, name)
+		fpath := filepath.Join(dir, name)
 		if FileExists(fpath) {
 			f, err := os.OpenFile(fpath, flag, perm)
 			if err != nil {
@@ -121,7 +115,7 @@ func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 //FindFullFilePath 查找相对目录文件的全路径文件 根据初始化的文件目录顺序查找文件（查文件不是查目录）
 func FindFullFilePath(name string) (string, error) {
 	for _, dir := range defaultDirs {
-		fpath := path.Join(dir, name)
+		fpath := filepath.Join(dir, name)
 		if FileExists(fpath) {
 			return fpath, nil
 		}
@@ -136,7 +130,7 @@ func FindFullFilePath(name string) (string, error) {
 //FindFullPathPath 查找相对文件目录的全路径目录 根据初始化的文件目录顺序查找文件（查目录不是查文件）
 func FindFullPathPath(name string) (string, error) {
 	for _, dir := range defaultDirs {
-		fpath := path.Join(dir, name)
+		fpath := filepath.Join(dir, name)
 		if DirExists(fpath) {
 			return fpath, nil
 		}
@@ -193,12 +187,12 @@ func ChangeFileExt(filename, newExt string) string {
 	file := path.Base(filename)
 	file = strings.TrimSuffix(file, path.Ext(file)) + newExt
 	dir := path.Dir(filename)
-	return path.Join(dir, file)
+	return filepath.Join(dir, file)
 }
 
 //PathJoin 路径合并 并将 “\\” 转换成 “/”
 func PathJoin(dir, filename string) string {
-	return strings.Replace(path.Join(filepath.Clean(dir), filename), "\\", "/", -1)
+	return strings.Replace(filepath.Join(filepath.Clean(dir), filename), "\\", "/", -1)
 }
 
 //TransPath 路径连接符转换 将路径 “\\” 转换成 “/”
