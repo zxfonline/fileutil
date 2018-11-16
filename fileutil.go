@@ -20,6 +20,8 @@ var (
 )
 var (
 	defaultDirs []string
+	//ExeName 执行文件名称
+	ExeName string
 )
 
 func init() {
@@ -32,7 +34,11 @@ func init() {
 	} else {
 		exeFile = path.Join(wd, arg0)
 	}
-	parent, _ := path.Split(exeFile)
+	parent, exeName := path.Split(exeFile)
+	names := strings.Split(exeName, ".")
+	exeName = names[0]
+	ExeName=exeName
+	fmt.Printf("exe name:%s.\n",exeName)
 	//1：命令执行所在目录
 	wdDir := TransPath(wd)
 	defaultDirs = append(defaultDirs, wdDir)
