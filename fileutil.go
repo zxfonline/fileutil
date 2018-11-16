@@ -11,6 +11,11 @@ import (
 	"strings"
 )
 
+const (
+	//EnvGoExeName 执行文件名称系统变量
+	EnvGoExeName = "EnvGoExeName"
+)
+
 var (
 	//DefaultFileMode 默认的文件权限 0644
 	DefaultFileMode os.FileMode = 0644
@@ -37,8 +42,6 @@ func init() {
 	parent, exeName := path.Split(exeFile)
 	names := strings.Split(exeName, ".")
 	exeName = names[0]
-	ExeName=exeName
-	fmt.Printf("exe name:%s.\n",exeName)
 	//1：命令执行所在目录
 	wdDir := TransPath(wd)
 	defaultDirs = append(defaultDirs, wdDir)
@@ -51,6 +54,19 @@ func init() {
 		defaultDirs = append(defaultDirs, exeLastDir)
 	}
 	fmt.Printf("default file base dirs:%v.\n", defaultDirs)
+	SetOSEnv(EnvGoExeName, exeName)
+	ExeName = exeName
+}
+
+//SetOSEnv 设置环境变量
+func SetOSEnv(option, value string) {
+	if old, ok := os.LookupEnv(option); ok {
+		os.Setenv(option, value)
+		fmt.Printf("update sys env [%s=%s] ==>[%s=%s]", option, old, option, value)
+	} else {
+		os.Setenv(option, value)
+		fmt.Printf("set sys env [%s=%s]", option, value)
+	}
 }
 
 //InitPathDirs 初始化工程文件根目录 retset：是否重置默认的目录列表 。 rootPaths：新增的目录列表，如果没有设置指定根目录并未重置默认的目录的话，文件搜索规则为: 1：命令执行所在目录、2：可执行文件所在目录、3：可执行文件上一级目录...新增的路径列表，否则直接按照给的文件名称查找文件。
