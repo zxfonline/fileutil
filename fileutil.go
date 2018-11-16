@@ -92,7 +92,7 @@ func InitPathDirs(retset bool, rootPaths ...string) {
 //FindFile 查找文件，根据初始化的文件目录顺序查找文件
 func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 	for _, dir := range defaultDirs {
-		fpath := filepath.Join(dir, name)
+		fpath := PathJoin(dir, name)
 		if FileExists(fpath) {
 			f, err := os.OpenFile(fpath, flag, perm)
 			if err != nil {
@@ -115,7 +115,7 @@ func FindFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 //FindFullFilePath 查找相对目录文件的全路径文件 根据初始化的文件目录顺序查找文件（查文件不是查目录）
 func FindFullFilePath(name string) (string, error) {
 	for _, dir := range defaultDirs {
-		fpath := filepath.Join(dir, name)
+		fpath := PathJoin(dir, name)
 		if FileExists(fpath) {
 			return fpath, nil
 		}
@@ -130,7 +130,7 @@ func FindFullFilePath(name string) (string, error) {
 //FindFullPathPath 查找相对文件目录的全路径目录 根据初始化的文件目录顺序查找文件（查目录不是查文件）
 func FindFullPathPath(name string) (string, error) {
 	for _, dir := range defaultDirs {
-		fpath := filepath.Join(dir, name)
+		fpath := PathJoin(dir, name)
 		if DirExists(fpath) {
 			return fpath, nil
 		}
@@ -187,7 +187,7 @@ func ChangeFileExt(filename, newExt string) string {
 	file := path.Base(filename)
 	file = strings.TrimSuffix(file, path.Ext(file)) + newExt
 	dir := path.Dir(filename)
-	return filepath.Join(dir, file)
+	return PathJoin(dir, file)
 }
 
 //PathJoin 路径合并 并将 “\\” 转换成 “/”
