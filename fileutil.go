@@ -62,10 +62,10 @@ func init() {
 func SetOSEnv(option, value string) {
 	if old, ok := os.LookupEnv(option); ok {
 		os.Setenv(option, value)
-		fmt.Printf("update sys env [%s=%s] ==>[%s=%s]", option, old, option, value)
+		fmt.Printf("update sys env [%s=%s] ==>[%s=%s]\n", option, old, option, value)
 	} else {
 		os.Setenv(option, value)
-		fmt.Printf("set sys env [%s=%s]", option, value)
+		fmt.Printf("set sys env [%s=%s]\n", option, value)
 	}
 }
 
