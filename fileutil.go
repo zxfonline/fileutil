@@ -17,8 +17,10 @@ const (
 )
 
 var (
-	//DefaultFileMode 默认的文件权限 0644
-	DefaultFileMode os.FileMode = 0644
+	//DefaultFileMode 默认的文件权限 0640
+	DefaultFileMode os.FileMode = 0640
+	//DefaultFolderMode 默认的文件夹权限 0750
+	DefaultFolderMode os.FileMode = 0750
 
 	//DefaultFileFlag linux下需加上O_WRONLY或是O_RDWR
 	DefaultFileFlag int = os.O_APPEND | os.O_CREATE | os.O_WRONLY
@@ -150,7 +152,7 @@ func OpenFile(pathfile string, fileflag int, filemode os.FileMode) (wc *os.File,
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
-		if err = os.MkdirAll(dir, filemode); err != nil {
+		if err = os.MkdirAll(dir, DefaultFolderMode); err != nil {
 			return nil, err
 		}
 		if _, err = os.Stat(dir); err != nil {
